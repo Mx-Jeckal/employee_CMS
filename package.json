@@ -1,0 +1,24 @@
+{
+  "name": "emp_cms",
+  "version": "1.0.0",
+  "description": "view a fictitious company's database of employees and department info",
+  "main": "tracker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mx-Jeckal/employee_CMS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mx-Jeckal/employee_CMS/issues"
+  },
+  "homepage": "https://github.com/Mx-Jeckal/employee_CMS#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^7.0.6",
+    "mysql": "^2.18.1"
+  }
+}
