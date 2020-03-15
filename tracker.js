@@ -374,5 +374,58 @@ function updateRole() {
 };
 
 function updateManager() {
+    connection.query("SELECT * FROM employees", function(err, results) {
+        if (err) throw err;
+        inquirer
+            .prompt([{
+                name: "choice",
+                type: "rawlist",
+                message: "Update the manager for which Employee?",
+                choices: function() {
+                    var choiceArray = [];
+                    for (var i = 0; i < results.length; i++) {
+                        choiceArray.push(results[i].first_name);
+                    }
+                    return choiceArray;
+                }
+            }])
+            .then(function(nameList) {
+                connection.query("SELECT manager_id FROM employees ", function(err, results) {
+                    if (err) throw err;
+                    console.log(results)
+                    inquirer
+                        .prompt([{
+                            name: "choice",
+                            type: "rawlist",
+                            message: `Who is ${nameList.choice}'s new Manager?`,
+                            choices: function() {
+                                var choiceArray = [];
+                                for (var i = 0; i < results.length; i++) {
+                                    choiceArray.push(results[i].manager_id);
+                                }
+                                return choiceArray;
+                            }
+
+                        }])
+
+                    // .then(function(roleList) {
+                    //     connection.query("UPDATE employees SET ? WHERE ?", [{
+                    //             manager_id: roleList.choice
+                    //         },
+                    //         {
+                    //             first_name: nameList.choice,
+                    //         }
+                    //     ], () => {
+                    //         console.log('Updating data base...');
+                    //         console.log('.....................');
+                    //         console.log('.....................')
+                    //         start();
+                    //     })
+                    // })
+                })
+            })
+    })
+
+
 
 };
