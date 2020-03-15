@@ -50,7 +50,7 @@ function start() {
             message: "What would you like to do?",
             choices: [
                 "View all Employees",
-                "View all Employees by Deparment",
+                "View all Departments",
                 "View all Employees by Manager",
                 "Add Employee",
                 "Add Department",
@@ -67,8 +67,8 @@ function start() {
                     viewEmployees();
                     break;
 
-                case "View all Employees by Deparment":
-                    employeeByDeparment();
+                case "View all Departments":
+                    viewDepartments();
                     break;
 
                 case "View all Employees by Manager":
@@ -136,14 +136,24 @@ function viewEmployees() {
 
 };
 
-function employeeByDeparment() {
+function viewDepartments() {
     connection.query(`SELECT * FROM departments`, function(err, res) {
+        console.log('this isn"t the problem')
         if (err) throw err;
-        console.log("-----------------------------");
-        console.log("-----------------------------");
-        console.log(res)
+        var roster = [];
+        for (var i = 0; i < res.length; i++) {
+            var depts = {
+                Departments: `${res[i].dept_name}`
+            }
+
+            roster.push(depts)
+
+        }
+
+        var table = cTable.getTable(roster)
+        console.log(table)
     });
-    start()
+    start();
 };
 
 function employeeByManager() {
@@ -290,14 +300,32 @@ function removeEmployee() {
 
 };
 
+// connection.query("SELECT * FROM employees WHERE role_id = 'Supervisor'", function(err, results) {
+//             if (err) throw err;
+//             inquirer
+//                 .prompt([{
+//                     name: "choice",
+//                     type: "rawlist",
+//                     message: "Who is the Employee's Manager?",
+//                     choices: function() {
+//                         var choiceArray = [];
+//                         for (var i = 0; i < results.length; i++) {
+//                             choiceArray.push(results[i].first_name + " " + results[i].last_name);
+//                             console.log(choiceArray);
+//                         }
+//                         return choiceArray;
+//                     }
+
+//                 }])
+
 function updateRole() {
-    connection.query("SELECT role_id FROM employees", function(err, results) {
+    connection.query("SELECT * FROM employees", function(err, results) {
         if (err) throw err;
         inquirer
             .prompt([{
                 name: "choice",
                 type: "rawlist",
-                message: "What is the Employee's Role?",
+                message: "Update which Employee's Role?",
                 choices: function() {
                     var choiceArray = [];
                     for (var i = 0; i < results.length; i++) {
@@ -305,14 +333,15 @@ function updateRole() {
                     }
                     return choiceArray;
                 }
-            }]).then(function(nameList) {
+            }])
+            .then(function(nameList) {
                 connection.query("SELECT title FROM roles", function(err, results) {
                     if (err) throw err;
                     inquirer
                         .prompt([{
                             name: "choice",
                             type: "rawlist",
-                            message: "What is the New Employee's Role?",
+                            message: `What is ${nameList.choice}'s new Role?`,
                             choices: function() {
                                 var choiceArray = [];
                                 for (var i = 0; i < results.length; i++) {
@@ -321,15 +350,22 @@ function updateRole() {
                                 return choiceArray;
                             }
 
-                        }]).then(function(roleList) {
-                            connection.query("UPDATE employees SET ? WHERE ?", [{
-                                    role_id: roleList.choice
-                                },
-                                {
-                                    first_name: nameList.choice,
-                                }
-                            ])
+                        }])
+
+                    .then(function(roleList) {
+                        connection.query("UPDATE employees SET ? WHERE ?", [{
+                                role_id: roleList.choice
+                            },
+                            {
+                                first_name: nameList.choice,
+                            }
+                        ], () => {
+                            console.log('Updating data base...');
+                            console.log('.....................');
+                            console.log('.....................')
+                            start();
                         })
+                    })
                 })
             })
     })
