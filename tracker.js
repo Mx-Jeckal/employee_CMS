@@ -53,6 +53,7 @@ function start() {
                 "View all Employees by Deparment",
                 "View all Employees by Manager",
                 "Add Employee",
+                "Add Department",
                 "Add Role",
                 "Remove Employee",
                 "Update Employee Role",
@@ -76,6 +77,10 @@ function start() {
 
                 case "Add Employee":
                     addEmployee();
+                    break;
+
+                case "Add Department":
+                    addDepartment();
                     break;
 
                 case "Add Role":
@@ -207,7 +212,7 @@ function addEmployee() {
                         }
 
                     }]).then(department => {
-                        connection.query("SELECT * FROM employees WHERE role_id = 'Manager'", function(err, results) {
+                        connection.query("SELECT * FROM employees WHERE role_id = 'Supervisor'", function(err, results) {
                             if (err) throw err;
                             inquirer
                                 .prompt([{
@@ -225,7 +230,7 @@ function addEmployee() {
 
                                 }]).then(function(roleanswer) {
                                     console.log(roleanswer)
-                                    connection.query("INSERT INTO employee SET ?", {
+                                    connection.query("INSERT INTO employees SET ?", {
                                         first_name: nameresponse.first_name,
                                         last_name: nameresponse.last_name,
                                         role_id: department.choice,
@@ -237,6 +242,22 @@ function addEmployee() {
                     })
             });
         })
+};
+
+function addDepartment() {
+
+    inquirer
+        .prompt({
+            name: "addDept",
+            type: "input",
+            message: "Enter the name of the new Department"
+        }).then(deptRes => {
+            connection.query("INSERT INTO departments SET ?", {
+                dept_name: deptRes.addDept
+            })
+            start();
+        })
+
 };
 
 function addRole() {
